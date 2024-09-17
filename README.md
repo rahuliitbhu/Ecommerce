@@ -1,5 +1,3 @@
 # Ecommerce
 
 # Hi
-
-# how
