@@ -315,8 +315,8 @@ export const ProductFilter = ({ Productcomponent }) => {
                 </form>
 
                 {/* Product grid */}
-                <div className="lg:col-span-3">
-                  <Productcomponent />{" "}
+                <div className="lg:col-span-3 ">
+                  <Productcomponent />
                 </div>
               </div>
             </section>
