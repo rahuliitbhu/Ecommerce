@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchCount } from "./counterAPI";
-
+import { fetchCount } from "./productlistAPI";
+// import { composeWithDevTools } from 'redux-devtools-extension';
 const initialState = {
   value: 0,
   status: "idle",
