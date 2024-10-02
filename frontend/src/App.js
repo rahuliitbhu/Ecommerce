@@ -7,6 +7,14 @@ import { store } from "./app/store";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import { createRoot } from "react-dom/client";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  Link,
+} from "react-router-dom";
+import { router } from "./features/routes/routes";
 
 function App() {
   return (
@@ -14,6 +22,8 @@ function App() {
       {/* <ProductList></ProductList> */}
       {/* <Home /> */}
       {/* <Login /> */}
+      <RouterProvider router={router} />
+
       <Signup />
     </div>
   );
