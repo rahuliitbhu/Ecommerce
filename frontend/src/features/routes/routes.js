@@ -7,8 +7,11 @@ import {
 import Login from "../../pages/Login";
 import Signup from "../../pages/Signup";
 import Home from "../../pages/Home";
+import Cart from "../cart/Cart";
+import CartPage from "../../pages/CartPage";
+import CheckoutPage from "../../pages/CheckoutPage";
 
-export const router = createBrowserRouter([
+export const router = [
   {
     path: "/",
     element: <Home />,
@@ -21,4 +24,14 @@ export const router = createBrowserRouter([
     path: "signup",
     element: <Signup />,
   },
-]);
+  {
+    //only for testing
+    path: "cart",
+    element: <CartPage />,
+  },
+  {
+    //only for testing
+    path: "checkout",
+    element: <CheckoutPage />,
+  },
+];
