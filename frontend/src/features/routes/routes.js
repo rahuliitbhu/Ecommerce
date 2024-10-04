@@ -10,6 +10,7 @@ import Home from "../../pages/Home";
 import Cart from "../cart/Cart";
 import CartPage from "../../pages/CartPage";
 import CheckoutPage from "../../pages/CheckoutPage";
+import Checkout from "../../pages/Checkout";
 
 export const router = [
   {
