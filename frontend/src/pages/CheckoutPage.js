@@ -9,7 +9,7 @@ import {
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
-import AddressList from "../components/AddressList";
+import AddressList from "../features/cart/components/AddressList";
 
 const CheckoutPage = () => {
   // const count = useSelector(selectCount);

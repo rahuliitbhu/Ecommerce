@@ -7,10 +7,10 @@ import {
 import Login from "../../pages/Login";
 import Signup from "../../pages/Signup";
 import Home from "../../pages/Home";
-import Cart from "../cart/Cart";
+import Cart from "../cart/components/Cart";
 import CartPage from "../../pages/CartPage";
 import CheckoutPage from "../../pages/CheckoutPage";
-import Checkout from "../../pages/Checkout";
+import ProductDetail from "../product-list/components/ProductDetail";
 
 export const router = [
   {
@@ -34,5 +34,10 @@ export const router = [
     //only for testing
     path: "checkout",
     element: <CheckoutPage />,
+  },
+  {
+    //only for testing
+    path: "product-detail",
+    element: <ProductDetail />,
   },
 ];
