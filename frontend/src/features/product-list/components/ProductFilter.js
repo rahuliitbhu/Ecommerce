@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Dialog,
   DialogBackdrop,
@@ -19,13 +20,17 @@ import {
   PlusIcon,
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
+// import { useSelector } from "react-redux";
+import {
+  fetchAllProductByFiltersAsync,
+  selectAllProducts,
+} from "../productSlice";
 
 const sortOptions = [
-  { name: "Most Popular", href: "#", current: true },
-  { name: "Best Rating", href: "#", current: false },
-  { name: "Newest", href: "#", current: false },
-  { name: "Price: Low to High", href: "#", current: false },
-  { name: "Price: High to Low", href: "#", current: false },
+  { name: "Best Rating", sort: "rating", order: "desc", current: false },
+
+  { name: "Price: Low to High", sort: "price", order: "asc", current: false },
+  { name: "Price: High to Low", sort: "price", order: "desc", current: false },
 ];
 const subCategories = [
   { name: "Totes", href: "#" },
@@ -37,26 +42,42 @@ const subCategories = [
 
 const filters = [
   {
-    id: "color",
-    name: "Color",
+    id: "brand",
+    name: "Brand",
     options: [
-      { value: "white", label: "White", checked: false },
-      { value: "beige", label: "Beige", checked: false },
-      { value: "blue", label: "Blue", checked: true },
-      { value: "brown", label: "Brown", checked: false },
-      { value: "green", label: "Green", checked: false },
-      { value: "purple", label: "Purple", checked: false },
+      { value: "Essence", label: "Essence", checked: false },
+      { value: "Glamour Beauty", label: "Glamour Beauty", checked: false },
+      { value: "Velvet Touch", label: "Velvet Touch", checked: false },
+      { value: "Chic Cosmetics", label: "Chic Cosmetics", checked: false },
+      { value: "Nail Couture", label: "Nail Couture", checked: false },
+      { value: "Calvin Klein", label: "Calvin Klein", checked: false },
+      { value: "Chanel", label: "Chanel", checked: false },
+      { value: "Dior", label: "Dior", checked: false },
+      {
+        value: "Dolce & Gabbana",
+        label: "Dolce & Gabbana",
+        checked: false,
+      },
+      { value: "Gucci", label: "Gucci", checked: false },
+      {
+        value: "Annibale Colombo",
+        label: "Annibale Colombo",
+        checked: false,
+      },
+      { value: "Furniture Co.", label: "Furniture Co.", checked: false },
+      { value: "Knoll", label: "Knoll", checked: false },
+      { value: "Bath Trends", label: "Bath Trends", checked: false },
+      { value: undefined, label: undefined, checked: false },
     ],
   },
   {
     id: "category",
     name: "Category",
     options: [
-      { value: "new-arrivals", label: "New Arrivals", checked: false },
-      { value: "sale", label: "Sale", checked: false },
-      { value: "travel", label: "Travel", checked: true },
-      { value: "organization", label: "Organization", checked: false },
-      { value: "accessories", label: "Accessories", checked: false },
+      { value: "beauty", label: "beauty", checked: false },
+      { value: "fragrances", label: "fragrances", checked: false },
+      { value: "furniture", label: "furniture", checked: false },
+      { value: "groceries", label: "groceries", checked: false },
     ],
   },
   {
@@ -77,6 +98,34 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 export const ProductFilter = ({ Productcomponent }) => {
+  const [filter, setFilter] = useState({});
+  const dispatch = useDispatch();
+  const products = useSelector(selectAllProducts);
+  // More products...
+  // useEffect(() => {
+  //   dispatch(fetchAllProductByFiltersAsync());
+  // }, []);
+
+  const handleSorting = (sort, order) => {
+    let newfilter = { ...filter, _sort: sort, _order: order };
+
+    setFilter(newfilter);
+    dispatch(fetchAllProductByFiltersAsync(newfilter));
+  };
+
+  const handleFilter = (e, section, option) => {
+    console.log(section.id, option.value);
+    let newfilter = { ...filter };
+    if (e.target.checked) {
+      newfilter[section.id] = option.value;
+    } else {
+      delete newfilter[section.id];
+    }
+    // let newfilter = { ...filter, [section.id]: option.value };
+    setFilter(newfilter);
+    dispatch(fetchAllProductByFiltersAsync(newfilter));
+  };
+
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   return (
     <div>
@@ -206,8 +255,10 @@ export const ProductFilter = ({ Productcomponent }) => {
                     <div className="py-1">
                       {sortOptions.map((option) => (
                         <MenuItem key={option.name}>
-                          <a
-                            href={option.href}
+                          <button
+                            onClick={() =>
+                              handleSorting(option.sort, option.order)
+                            }
                             className={classNames(
                               option.current
                                 ? "font-medium text-gray-900"
@@ -216,7 +267,7 @@ export const ProductFilter = ({ Productcomponent }) => {
                             )}
                           >
                             {option.name}
-                          </a>
+                          </button>
                         </MenuItem>
                       ))}
                     </div>
@@ -297,6 +348,9 @@ export const ProductFilter = ({ Productcomponent }) => {
                                 defaultChecked={option.checked}
                                 id={`filter-${section.id}-${optionIdx}`}
                                 name={`${section.id}[]`}
+                                onChange={(e) =>
+                                  handleFilter(e, section, option)
+                                }
                                 type="checkbox"
                                 className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                               />

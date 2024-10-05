@@ -1,46 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { increment, incrementAsync, selectCount } from "../productSlice";
+import {
+  fetchAllProductsAsync,
+  increment,
+  incrementAsync,
+  selectAllProducts,
+} from "../productSlice";
 import { ProductFilter } from "./ProductFilter";
 import { Link } from "react-router-dom";
 
 export const ProductListComponent = () => {
-  const count = useSelector(selectCount);
+  // const count = useSelector(selectCount);
   const dispatch = useDispatch();
 
-  const products = [
-    {
-      id: 1,
-      name: "Basic Tee",
-      href: "#",
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-      imageAlt: "Front of men's Basic Tee in black.",
-      price: "$35",
-      color: "Black",
-    },
-    {
-      id: 2,
-      name: "Basic Tee",
-      href: "#",
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-      imageAlt: "Front of men's Basic Tee in black.",
-      price: "$35",
-      color: "Black",
-    },
-    {
-      id: 3,
-      name: "Basic Tee",
-      href: "#",
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-      imageAlt: "Front of men's Basic Tee in black.",
-      price: "$35",
-      color: "Black",
-    },
-    // More products...
-  ];
+  const products = useSelector(selectAllProducts);
+  // More products...
+  useEffect(() => {
+    dispatch(fetchAllProductsAsync());
+  }, []);
   return (
     <div>
       <div className="bg-white">
@@ -55,8 +32,8 @@ export const ProductListComponent = () => {
                 <div key={product.id} className="group relative">
                   <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
                     <img
-                      alt={product.imageAlt}
-                      src={product.imageSrc}
+                      alt={product.thumbnail}
+                      src={product.images}
                       className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                     />
                   </div>
