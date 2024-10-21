@@ -24,7 +24,11 @@ import {
 import {
   fetchAllProductByFiltersAsync,
   selectAllProducts,
+  selectAllItems,
+  selectAllCategory,
+  selectAllBrands,
 } from "../productSlice";
+import Pagination from "../../../components/Pagination";
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
@@ -40,92 +44,98 @@ const subCategories = [
   { name: "Laptop Sleeves", href: "#" },
 ];
 
-const filters = [
-  {
-    id: "brand",
-    name: "Brand",
-    options: [
-      { value: "Essence", label: "Essence", checked: false },
-      { value: "Glamour Beauty", label: "Glamour Beauty", checked: false },
-      { value: "Velvet Touch", label: "Velvet Touch", checked: false },
-      { value: "Chic Cosmetics", label: "Chic Cosmetics", checked: false },
-      { value: "Nail Couture", label: "Nail Couture", checked: false },
-      { value: "Calvin Klein", label: "Calvin Klein", checked: false },
-      { value: "Chanel", label: "Chanel", checked: false },
-      { value: "Dior", label: "Dior", checked: false },
-      {
-        value: "Dolce & Gabbana",
-        label: "Dolce & Gabbana",
-        checked: false,
-      },
-      { value: "Gucci", label: "Gucci", checked: false },
-      {
-        value: "Annibale Colombo",
-        label: "Annibale Colombo",
-        checked: false,
-      },
-      { value: "Furniture Co.", label: "Furniture Co.", checked: false },
-      { value: "Knoll", label: "Knoll", checked: false },
-      { value: "Bath Trends", label: "Bath Trends", checked: false },
-      { value: undefined, label: undefined, checked: false },
-    ],
-  },
-  {
-    id: "category",
-    name: "Category",
-    options: [
-      { value: "beauty", label: "beauty", checked: false },
-      { value: "fragrances", label: "fragrances", checked: false },
-      { value: "furniture", label: "furniture", checked: false },
-      { value: "groceries", label: "groceries", checked: false },
-    ],
-  },
-  {
-    id: "size",
-    name: "Size",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
-    ],
-  },
-];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 export const ProductFilter = ({ Productcomponent }) => {
   const [filter, setFilter] = useState({});
+  const [sort, setSort] = useState({});
+  const [page, setPage] = useState(1);
+  const [actionList, setActionList] = useState([]);
   const dispatch = useDispatch();
   const products = useSelector(selectAllProducts);
+  const category = useSelector(selectAllCategory);
+  const brands = useSelector(selectAllBrands);
+  const totalItems = useSelector(selectAllItems);
+  const [pagination, setPagination] = useState({});
+  const limit = 10;
+  const filters = [
+    {
+      id: "brand",
+      name: "Brand",
+      options: brands,
+    },
+    {
+      id: "category",
+      name: "Category",
+      options: category,
+    },
+    {
+      id: "size",
+      name: "Size",
+      options: [
+        { value: "2l", label: "2L", checked: false },
+        { value: "6l", label: "6L", checked: false },
+        { value: "12l", label: "12L", checked: false },
+        { value: "18l", label: "18L", checked: false },
+        { value: "20l", label: "20L", checked: false },
+        { value: "40l", label: "40L", checked: true },
+      ],
+    },
+  ];
+
   // More products...
   // useEffect(() => {
   //   dispatch(fetchAllProductByFiltersAsync());
   // }, []);
+  const handlePagination = (currPageNo) => {
+    // let newFilter = { _page: currPageNo, _limit: limit };
+    let newFilter = { ...pagination, _page: currPageNo, _limit: limit };
+    // let newActionList = [newFilter];
+    let newActionList = actionList.filter((item) => item !== pagination);
+    newActionList = [...newActionList, newFilter];
+    setActionList(newActionList);
+    setPagination(newFilter);
+    dispatch(fetchAllProductByFiltersAsync(newActionList));
+  };
+  const handlePageNo = (pageNo) => {
+    setPage(pageNo);
+  };
+  const handleSorting = (option) => {
+    let newActionList = actionList.filter((item) => item !== sort);
+    let newSort = { ...sort, _sort: option.sort, _order: option.order };
 
-  const handleSorting = (sort, order) => {
-    let newfilter = { ...filter, _sort: sort, _order: order };
-
-    setFilter(newfilter);
-    dispatch(fetchAllProductByFiltersAsync(newfilter));
+    setSort(newSort);
+    newActionList = [...newActionList, newSort];
+    setActionList(newActionList);
+    dispatch(fetchAllProductByFiltersAsync(newActionList));
   };
 
   const handleFilter = (e, section, option) => {
-    console.log(section.id, option.value);
+    // console.log(section.id, option.value);
     let newfilter = { ...filter };
     if (e.target.checked) {
       newfilter[section.id] = option.value;
     } else {
       delete newfilter[section.id];
     }
-    // let newfilter = { ...filter, [section.id]: option.value };
-    setFilter(newfilter);
-    dispatch(fetchAllProductByFiltersAsync(newfilter));
-  };
+    let newActionList;
 
+    if (Object.keys(newfilter).length === 0) {
+      newActionList = actionList.filter((item) => item !== filter);
+    } else {
+      newActionList = [...actionList, newfilter];
+      // console.log(filter, newActionList);
+    }
+    setFilter(newfilter);
+    // newActionList = [...newActionList, newfilter];
+    setActionList(newActionList);
+    dispatch(fetchAllProductByFiltersAsync(newActionList));
+  };
+  useEffect(() => {
+    handlePagination(1);
+    // dispatch(fetchAllProductByFiltersAsync(filter, sort));
+  }, []);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   return (
     <div>
@@ -256,9 +266,7 @@ export const ProductFilter = ({ Productcomponent }) => {
                       {sortOptions.map((option) => (
                         <MenuItem key={option.name}>
                           <button
-                            onClick={() =>
-                              handleSorting(option.sort, option.order)
-                            }
+                            onClick={() => handleSorting(option)}
                             className={classNames(
                               option.current
                                 ? "font-medium text-gray-900"
@@ -372,6 +380,10 @@ export const ProductFilter = ({ Productcomponent }) => {
                 <div className="lg:col-span-3 ">
                   <Productcomponent />
                 </div>
+                <Pagination
+                  handlePagination={handlePagination}
+                  totalItems={totalItems}
+                />
               </div>
             </section>
           </main>

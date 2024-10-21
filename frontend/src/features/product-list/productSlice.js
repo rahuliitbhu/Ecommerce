@@ -1,8 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchAllProducts, fetchAllProductByFilters } from "./productlistAPI";
+import {
+  fetchAllProducts,
+  fetchAllProductByFilters,
+  fetchAllBrands,
+  fetchAllCategory,
+} from "./productlistAPI";
+import { act } from "react";
 // import { composeWithDevTools } from 'redux-devtools-extension';
 const initialState = {
   products: [],
+  totalItems: 0,
+  category: [],
+  brands: [],
   status: "idle",
 };
 
@@ -19,10 +28,26 @@ export const fetchAllProductsAsync = createAsyncThunk(
     return response.data;
   }
 );
+export const fetchAllCategoryAsync = createAsyncThunk(
+  "product/fetchAllCategory",
+  async () => {
+    const response = await fetchAllCategory();
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
+export const fetchAllBrandsAsync = createAsyncThunk(
+  "product/fetchAllBrands",
+  async () => {
+    const response = await fetchAllBrands();
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
 export const fetchAllProductByFiltersAsync = createAsyncThunk(
   "product/fetchAllProductByFilters",
-  async (filter) => {
-    const response = await fetchAllProductByFilters(filter);
+  async (actionList) => {
+    const response = await fetchAllProductByFilters(actionList);
     // The value we return becomes the `fulfilled` action payload
     return response.data;
   }
@@ -58,7 +83,24 @@ export const productSlice = createSlice({
       })
       .addCase(fetchAllProductByFiltersAsync.fulfilled, (state, action) => {
         state.status = "idle";
-        state.products = action.payload;
+        state.products = action.payload.products;
+        state.totalItems = action.payload.totalItems;
+      });
+    builder
+      .addCase(fetchAllCategoryAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllCategoryAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.category = action.payload;
+      });
+    builder
+      .addCase(fetchAllBrandsAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllBrandsAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.brands = action.payload;
       });
   },
 });
@@ -69,6 +111,9 @@ export const { increment } = productSlice.actions;
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectAllProducts = (state) => state.product.products;
+export const selectAllItems = (state) => state.product.totalItems;
+export const selectAllCategory = (state) => state.product.category;
+export const selectAllBrands = (state) => state.product.brands;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.

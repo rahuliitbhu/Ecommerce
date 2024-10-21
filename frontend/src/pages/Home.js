@@ -12,7 +12,7 @@ const Home = () => {
       <ProductList>
         <ProductFilter />
       </ProductList>
-      <Pagination />
+      {/* <Pagination /> */}
     </div>
   );
 };

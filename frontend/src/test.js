@@ -1657,5 +1657,12 @@ let val = catogories.map((item) => ({
   label: item,
   checked: false,
 }));
+// val;
+const brands = [...new Set([...products.map((item) => item.brand)])];
+val = brands.map((item) => ({
+  value: item,
+  label: item,
+  checked: false,
+}));
 val;
 // catogories;
