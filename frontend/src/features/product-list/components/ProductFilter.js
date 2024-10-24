@@ -27,8 +27,11 @@ import {
   selectAllItems,
   selectAllCategory,
   selectAllBrands,
+  fetchAllBrandsAsync,
+  fetchAllCategoryAsync,
 } from "../productSlice";
 import Pagination from "../../../components/Pagination";
+import { fetchAllCategory } from "../productlistAPI";
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
@@ -134,6 +137,8 @@ export const ProductFilter = ({ Productcomponent }) => {
   };
   useEffect(() => {
     handlePagination(1);
+    dispatch(fetchAllBrandsAsync());
+    dispatch(fetchAllCategoryAsync());
     // dispatch(fetchAllProductByFiltersAsync(filter, sort));
   }, []);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -220,6 +225,9 @@ export const ProductFilter = ({ Productcomponent }) => {
                                 defaultChecked={option.checked}
                                 id={`filter-mobile-${section.id}-${optionIdx}`}
                                 name={`${section.id}[]`}
+                                onChange={(e) =>
+                                  handleFilter(e, section, option)
+                                }
                                 type="checkbox"
                                 className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                               />

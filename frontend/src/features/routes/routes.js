@@ -37,7 +37,7 @@ export const router = [
   },
   {
     //only for testing
-    path: "product-detail",
+    path: "product-detail/:id",
     element: <ProductDetail />,
   },
 ];
