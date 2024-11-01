@@ -29,9 +29,10 @@ import {
   selectAllBrands,
   fetchAllBrandsAsync,
   fetchAllCategoryAsync,
+  fetchAllProductsAsync,
 } from "../productSlice";
 import Pagination from "../../../components/Pagination";
-import { fetchAllCategory } from "../productlistAPI";
+import { fetchAllCategory, fetchAllProducts } from "../productlistAPI";
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
@@ -137,6 +138,7 @@ export const ProductFilter = ({ Productcomponent }) => {
   };
   useEffect(() => {
     handlePagination(1);
+    // dispatch(fetchAllProductsAsync());
     dispatch(fetchAllBrandsAsync());
     dispatch(fetchAllCategoryAsync());
     // dispatch(fetchAllProductByFiltersAsync(filter, sort));

@@ -4,40 +4,59 @@ import {
   Route,
   Link,
 } from "react-router-dom";
-import Login from "../../pages/Login";
-import Signup from "../../pages/Signup";
+import Login from "../../pages/LoginPage";
+
 import Home from "../../pages/Home";
 import Cart from "../cart/components/Cart";
 import CartPage from "../../pages/CartPage";
 import CheckoutPage from "../../pages/CheckoutPage";
 import ProductDetail from "../product-list/components/ProductDetail";
+import SignupPage from "../../pages/SignupPage";
+import Protected from "../auth/components/Protected";
+import LoginPage from "../../pages/LoginPage";
 
 export const router = [
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <Protected>
+        <Home />
+      </Protected>
+    ),
   },
   {
     path: "login",
-    element: <Login />,
+    element: <LoginPage />,
   },
   {
     path: "signup",
-    element: <Signup />,
+    element: <SignupPage />,
   },
   {
     //only for testing
     path: "cart",
-    element: <CartPage />,
+    element: (
+      <Protected>
+        <CartPage />
+      </Protected>
+    ),
   },
   {
     //only for testing
     path: "checkout",
-    element: <CheckoutPage />,
+    element: (
+      <Protected>
+        <CheckoutPage />
+      </Protected>
+    ),
   },
   {
     //only for testing
     path: "product-detail/:id",
-    element: <ProductDetail />,
+    element: (
+      <Protected>
+        <ProductDetail />
+      </Protected>
+    ),
   },
 ];

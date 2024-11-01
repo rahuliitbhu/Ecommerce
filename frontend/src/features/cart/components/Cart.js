@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { increment, incrementAsync, selectCount } from "../cartSlice";
+import { increment, incrementAsync, selectItems } from "../cartSlice";
 
 import {
   Dialog,
@@ -9,10 +9,13 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { fetchAllProductsByIdAsync } from "../../product-list/productSlice";
+import { selectUser } from "../../auth/AuthenticationSlice";
 
 export default function Cart() {
-  const count = useSelector(selectCount);
+  // const products = useSelector(selectItems);
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
 
   const products = [
     {
@@ -41,7 +44,9 @@ export default function Cart() {
     },
     // More products...
   ];
-
+  // useEffect(() => {
+  //   dispatch(fetchAllProductsByIdAsync(user.id));
+  // }, []);
   const [open, setOpen] = useState(true);
 
   return (
