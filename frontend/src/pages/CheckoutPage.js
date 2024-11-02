@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -8,38 +8,61 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import AddressList from "../features/cart/components/AddressList";
+import {
+  deleteCartItemAsync,
+  fetchItemsByUserIdAsync,
+  selectItems,
+  updateToCartAsync,
+} from "../features/cart/cartSlice";
+import { selectUser } from "../features/auth/AuthenticationSlice";
 
 const CheckoutPage = () => {
+  const products = useSelector(selectItems);
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const totalAmount = products.reduce(
+    (amount, item) => amount + item.price * item.quantity,
+    0
+  );
+
+  const handleQuantity = (e, product) => {
+    dispatch(updateToCartAsync({ ...product, quantity: e.target.value }));
+    // console.log(product);
+  };
   // const count = useSelector(selectCount);
-  const products = [
-    {
-      id: 1,
-      name: "Throwback Hip Bag",
-      href: "#",
-      color: "Salmon",
-      price: "$90.00",
-      quantity: 1,
-      imageSrc:
-        "https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-      imageAlt:
-        "Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.",
-    },
-    {
-      id: 2,
-      name: "Medium Stuff Satchel",
-      href: "#",
-      color: "Blue",
-      price: "$32.00",
-      quantity: 1,
-      imageSrc:
-        "https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-02.jpg",
-      imageAlt:
-        "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
-    },
-    // More products...
-  ];
+  // const products = [
+  //   {
+  //     id: 1,
+  //     name: "Throwback Hip Bag",
+  //     href: "#",
+  //     color: "Salmon",
+  //     price: "$90.00",
+  //     quantity: 1,
+  //     imageSrc:
+  //       "https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
+  //     imageAlt:
+  //       "Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Medium Stuff Satchel",
+  //     href: "#",
+  //     color: "Blue",
+  //     price: "$32.00",
+  //     quantity: 1,
+  //     imageSrc:
+  //       "https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-02.jpg",
+  //     imageAlt:
+  //       "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
+  //   },
+  //   // More products...
+  // ];
+  useEffect(() => {
+    dispatch(fetchItemsByUserIdAsync(user.id));
+    // console.log(products);
+  }, [products]);
   const [open, setOpen] = useState(true);
   const address = [
     {
@@ -53,6 +76,7 @@ const CheckoutPage = () => {
   ];
   return (
     <div>
+      {!products.length && <Navigate to="/"></Navigate>}
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-7 xl:gap-x-8">
           <div className="ml-5 lg:col-span-4">
@@ -302,7 +326,7 @@ const CheckoutPage = () => {
                             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                               <img
                                 alt={product.imageAlt}
-                                src={product.imageSrc}
+                                src={product.images[0]}
                                 className="h-full w-full object-cover object-center"
                               />
                             </div>
@@ -328,7 +352,9 @@ const CheckoutPage = () => {
                                     Qty
                                   </label>
                                   {/* {product.quantity} */}
-                                  <select>
+                                  <select
+                                    onChange={(e) => handleQuantity(e, product)}
+                                  >
                                     <option>1</option>
                                     <option>2</option>
                                   </select>
@@ -336,6 +362,9 @@ const CheckoutPage = () => {
 
                                 <div className="flex">
                                   <button
+                                    onClick={() => {
+                                      dispatch(deleteCartItemAsync(product.id));
+                                    }}
                                     type="button"
                                     className="font-medium text-indigo-600 hover:text-indigo-500"
                                   >
@@ -354,7 +383,7 @@ const CheckoutPage = () => {
                 <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                   <div className="flex justify-between text-base font-medium text-gray-900">
                     <p>Subtotal</p>
-                    <p>$262.00</p>
+                    <p>{`$${totalAmount}`}</p>
                   </div>
                   <p className="mt-0.5 text-sm text-gray-500">
                     Shipping and taxes calculated at checkout.

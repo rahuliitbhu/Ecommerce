@@ -31,3 +31,13 @@ export function updateToCart(update) {
     resolve({ data });
   });
 }
+export function deleteCartItem(itemId) {
+  return new Promise(async (resolve) => {
+    const response = await fetch("http://localhost:8000/cart/" + itemId, {
+      method: "DELETE",
+      headers: { "content-type": "application/json" },
+    });
+    const data = await response.json();
+    resolve({ data: { id: itemId } });
+  });
+}

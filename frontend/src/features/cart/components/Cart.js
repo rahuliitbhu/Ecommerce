@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  deleteCartItemAsync,
   fetchItemsByUserIdAsync,
   increment,
   incrementAsync,
@@ -17,6 +18,7 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { fetchAllProductsByIdAsync } from "../../product-list/productSlice";
 import { selectUser } from "../../auth/AuthenticationSlice";
+import { Link, Navigate } from "react-router-dom";
 
 export default function Cart() {
   const products = useSelector(selectItems);
@@ -69,6 +71,7 @@ export default function Cart() {
 
   return (
     <div>
+      {!products.length && <Navigate to="/"></Navigate>}
       {products && (
         <Dialog open={open} onClose={setOpen} className="relative z-10">
           <DialogBackdrop
@@ -153,6 +156,11 @@ export default function Cart() {
 
                                     <div className="flex">
                                       <button
+                                        onClick={() => {
+                                          dispatch(
+                                            deleteCartItemAsync(product.id)
+                                          );
+                                        }}
                                         type="button"
                                         className="font-medium text-indigo-600 hover:text-indigo-500"
                                       >
@@ -177,12 +185,12 @@ export default function Cart() {
                         Shipping and taxes calculated at checkout.
                       </p>
                       <div className="mt-6">
-                        <a
-                          href="#"
+                        <Link
+                          to="/checkout"
                           className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                         >
                           Checkout
-                        </a>
+                        </Link>
                       </div>
                       <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                         <p>
