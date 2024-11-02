@@ -12,9 +12,13 @@ import {
   ShoppingCartIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+// import { selectAllItems } from "../features/product-list/productSlice";
+import { selectItems } from "../features/cart/cartSlice";
 
 const navigation = [{ name: "Dashboard", link: "#", current: true }];
+// eslint-disable-next-line react-hooks/rules-of-hooks
 
 const userNavigation = [
   { name: "Profile", link: "/" },
@@ -27,6 +31,18 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+  const items = useSelector(selectItems);
+
+  // console.log("items length", items.length);
+  // const user = useSelector(selectUser);
+  // const items = useSelector(selectItems);
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   if (user) {
+  //     dispatch(fetchItemsByUserIdAsync(user.id));
+  //     console.log("APP: items", items);
+  //   }
+  // }, []);
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -86,7 +102,7 @@ export default function Navbar() {
             </Link>
 
             <span className="inline-flex items-center rounded-md mb-7 -ml-3 px-2 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-              3
+              {items.length > 0 ? items.length : ""}
             </span>
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-3">
